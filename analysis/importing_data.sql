@@ -20,46 +20,54 @@ churn: Binary variable indicating whether the customer has churned or not (1 = c
 */
 
 
-CREATE TABLE telecomm (
-customer_id BIGINT NOT NULL UNIQUE,
-telecom_partner VARCHAR(50),
-gender CHAR(1),
-age INT,
-state VARCHAR(50),
-city VARCHAR(50),
-pincode CHAR(6),
-date_of_registration VARCHAR(50),
-num_dependents INT,
-estimated_salary DOUBLE,
-calls_made INT,
-sms_sent INT,
-data_used BIGINT,
-churn BOOL,
-PRIMARY KEY (customer_id)
+CREATE TABLE telecom (
+    customerID VARCHAR(20),
+    gender VARCHAR(10),
+    SeniorCitizen INT,
+    Partner VARCHAR(10),
+    Dependents VARCHAR(10),
+    tenure INT,
+    PhoneService VARCHAR(10),
+    MultipleLines VARCHAR(25),
+    InternetService VARCHAR(25),
+    OnlineSecurity VARCHAR(25),
+    OnlineBackup VARCHAR(25),
+    DeviceProtection VARCHAR(25),
+    TechSupport VARCHAR(25),
+    StreamingTV VARCHAR(25),
+    StreamingMovies VARCHAR(25),
+    Contract VARCHAR(25),
+    PaperlessBilling VARCHAR(10),
+    PaymentMethod VARCHAR(50),
+    MonthlyCharges DECIMAL(10,2),
+    TotalCharges DECIMAL(10,2),
+    Churn VARCHAR(10),
+    PRIMARY KEY (customerID)
 );
-
 /*
-LOAD DATA LOCAL INFILE '"E:/DataAnalystCareer/GitRepoForDA/telecomm_churn_analysis/data/telecom_churn.csv"'
-INTO TABLE telecom
-FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"' 
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
+MySQL doesnt allow loading data from outside C:/ProgramData/MySQL/MySQL Server/Uploads folder
+which is inaccessible to me.
+So I inserted 1st 5 rows from csv to this table via INSERT INTO VALUES command
 */
-INSERT INTO telecomm VALUES
-(1,'Reliance Jio','F',25,'Karnataka','Kolkata','755597','01-01-2020',4,124962,44,45,-361,0);
 
+SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 1;
+
+ALTER TABLE telecomm
+ADD date_of_registration2 DATE
+AFTER date_of_registration;
+
+ALTER TABLE telecomm MODIFY COLUMN data_used FLOAT;
+
+-- DECIMAL(5,2) -> total no. of digits (always must be 5) = 5, decimal places = 2 
+-- FLOAT -> decimal data no need specify anything
+-- DOUBLE -> bigger version Float 
+/*
+ binary column BOOL 
+ MySQL recognises it as TINYINT(1)
+ TINYINT(1) range = -127 to 127 
+ false = 0
+ true != 0 (can be negative) -> (-127 to -1) + (1 to 127) 
+*/
 SELECT * FROM telecomm;
-INSERT INTO telecomm VALUES
-(2,	'Reliance Jio','F', 55, 'Mizoram', 'Mumbai', '125926', '01-01-2020',2,	130556,62, 39, 5973,0);
-INSERT INTO telecomm VALUES
-(3,	'Vodafone',	'F', 57, 'Arunachal Pradesh', 'Delhi', '423976','01-01-2020', 0, 148828, 49, 24, 193,1);
-INSERT INTO telecomm VALUES
-(4,	'BSNL',	'M', 46, 'Tamil Nadu', 'Kolkata', '522841', '01-01-2020', 1,138722, 80, 25, 9377,	1);
-INSERT INTO telecomm VALUES
-(5,	'BSNL',	'F', 26, 'Tripura', 'Delhi', '740247', '01-01-2020', 2, 55098, 78, 15, 1393, 0);
-
-SELECT * FROM telecomm;
-
-
-
+DESC telecomm;
