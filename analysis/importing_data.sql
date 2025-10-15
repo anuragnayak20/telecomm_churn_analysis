@@ -47,6 +47,14 @@ CREATE TABLE telecom (
 /*
 MySQL doesnt allow loading data from outside C:/ProgramData/MySQL/MySQL Server/Uploads folder
 which is inaccessible to me.
+
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/telecom_churn.csv'
+INTO TABLE telecom_churn
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"' 
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
 So I inserted 1st 5 rows from csv to this table via INSERT INTO VALUES command
 */
 
