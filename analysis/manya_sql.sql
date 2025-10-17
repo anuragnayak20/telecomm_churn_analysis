@@ -12,4 +12,9 @@ FROM telecomm
 WHERE churn=1
 GROUP BY gender;
 
+-- 5.Is churn higher among customers with higher monthly charges? Indicates if pricing and affordability are factors in churn. (OMIT)
+SELECT * FROM telecomm;
+
+-- 7.Does the payment method (e.g., electronic check, credit card, bank transfer) affect churn?Identifies if convenience or payment habits correlate with churn.(OMIT)
+
     
