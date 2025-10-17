@@ -17,3 +17,21 @@ FROM telecomm
 WHERE churn = 1
 GROUP BY num_dependents
 ORDER BY num_dependents;
+/*
+Billing, Tenure & Payment Patterns
+5.	Is churn higher among customers with higher monthly charges?
+→ Indicates if pricing and affordability are factors in churn.
+6.	Do customers with longer tenure tend to stay longer (churn less)?
+→ Evaluates loyalty and satisfaction over time.
+7.	Does the payment method (e.g., electronic check, credit card, bank transfer) affect churn? (EXCEL CHECK)
+→ Identifies if convenience or payment habits correlate with churn.
+8.	Is there a difference in churn between paperless billing and mailed billing customers? (OMIT)
+→ Shows if billing experience affects retention.
+*/
+
+-- 6 Do customers with longer tenure tend to stay longer (churn less)? -> have to create new column + correl() in Excel
+SELECT (CURRENT_DATE() - date_of_registration) AS tenure -- tenure logic figured out
+FROM telecomm;
+
+-- 8 Is there a difference in churn between paperless billing and mailed billing customers? -> no payment method specified
+SELECT * FROM telecomm;
