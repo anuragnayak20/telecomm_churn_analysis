@@ -35,3 +35,42 @@ FROM telecomm;
 
 -- 8 Is there a difference in churn between paperless billing and mailed billing customers? -> no payment method specified
 SELECT * FROM telecomm;
+
+-- UNIVARIATE ANALYSIS - Gender demographics
+SELECT gender,COUNT(gender) AS perc
+FROM telecomm
+GROUP BY gender;
+
+/*
+BIVARIATE ANALYSIS
+•	Churn and Gender: 
+•	Churn and Age: 
+•	Churn and Salary: 
+•	Churn and Number of Dependents:
+•	Churn and Tenure: (need more data)
+*/
+SELECT gender, COUNT(churn) AS churn_num -- male churn > female churn -> possible that 1 gender churning more
+FROM telecomm
+WHERE churn = 1
+GROUP BY gender;
+
+SELECT age,COUNT(churn) AS churn_num -- age 57 and 46 churning -> possible that certain ages churn more
+FROM telecomm
+WHERE churn = 1
+GROUP BY age;
+-- salary does matter 
+SELECT COUNT(churn) as churn_num
+FROM telecomm
+WHERE churn = 1 AND estimated_salary > (SELECT AVG(estimated_salary) FROM telecomm);
+
+SELECT COUNT(churn) as churn_num
+FROM telecomm
+WHERE churn = 1 AND estimated_salary < (SELECT AVG(estimated_salary) FROM telecomm);
+
+SELECT num_dependents,COUNT(churn) AS churn_num -- not necessary that there is a straight trend of num of depedents and churn
+FROM telecomm
+WHERE churn = 1
+GROUP BY num_dependents 
+ORDER BY churn_num DESC;
+
+-- ADVANCED ANALYSIS needs Excel only.
