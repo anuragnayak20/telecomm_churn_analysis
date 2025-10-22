@@ -1,76 +1,61 @@
 /*
-Customer Profile & Demographics
-3.	Are senior citizens more likely to churn than younger customers?
-→ Reveals if older customers have a higher tendency to leave.
-4.	Does having a partner or dependents affect churn rates?
-→ Tests if family responsibilities impact loyalty.
+LOADED THE CSV FILE IN THE SCHEMA (only 759 rows but csv has more than 2,43,000 rows)
+Slow data import (C: drive full) caused to stop data import at 759 rows. 
+SQL analysis here used to conduct exploratory analysis
+
+1. univariate: male to female percentage , age distribution
+2. bivariate : churn affected by gender, age, salary, num of dependents, tenure
+3. advanced analysis : data, calls, sms usage affecting churn {only possible in excel}
 */
--- 3. > 45 churn happening -> minor trend possible
-SELECT age,COUNT(churn) AS num_of_churn
-FROM telecomm
+SELECT COUNT(*) FROM telecom_churn; -- 759 of the total 2,00,000 rows loaded (slow import process)
+SELECT * FROM telecom_churn; -- to view the whole table
+-- UNIVARIATE analysis
+-- in first 759, 39% female and 61% male
+SELECT gender, COUNT(*) AS gender_count, ROUND(COUNT(*)/(SELECT COUNT(*) FROM telecom_churn)*100.0,0) AS gender_perc
+FROM telecom_churn
+GROUP BY gender;
+-- age distribution - evenly distributed ages
+SELECT age, COUNT(*) AS age_count
+FROM telecom_churn
+GROUP BY age
+ORDER BY age_count DESC;
+
+-- BIVARIATE 
+-- males have higher churn
+SELECT gender, COUNT(churn) AS churn_headcount
+FROM telecom_churn
+WHERE churn = 1
+GROUP BY gender;
+
+-- certain age groups have more churn but no uniform trend
+SELECT age, COUNT(churn) AS churn_headcount
+FROM telecom_churn
 WHERE churn = 1
 GROUP BY age
-ORDER BY age DESC;
--- 4. 0: 1 churn, 1 partner : 1 churn , 4 partner : 1 churn -> churn not dependent on num_dependents column
-SELECT num_dependents, COUNT(churn) AS num_of_churn
-FROM telecomm
+ORDER BY churn_headcount DESC;
+
+-- more people churn if salary > mean
+SELECT COUNT(*) AS churn_headcount_above_mean_salary
+FROM telecom_churn
+WHERE churn = 1 AND estimated_salary > (SELECT AVG(estimated_salary) FROM telecom_churn);
+-- lesser people if salary < mean
+SELECT COUNT(*) AS churn_headcount_lesser_or_equal_to_mean_salary
+FROM telecom_churn
+WHERE churn = 1 AND estimated_salary <= (SELECT AVG(estimated_salary) FROM telecom_churn);
+
+-- if dependents = 3, then max churn
+SELECT num_dependents, COUNT(churn) AS churn_headcount
+FROM telecom_churn
 WHERE churn = 1
 GROUP BY num_dependents
-ORDER BY num_dependents;
-/*
-Billing, Tenure & Payment Patterns
-5.	Is churn higher among customers with higher monthly charges?
-→ Indicates if pricing and affordability are factors in churn.
-6.	Do customers with longer tenure tend to stay longer (churn less)?
-→ Evaluates loyalty and satisfaction over time.
-7.	Does the payment method (e.g., electronic check, credit card, bank transfer) affect churn? (EXCEL CHECK)
-→ Identifies if convenience or payment habits correlate with churn.
-8.	Is there a difference in churn between paperless billing and mailed billing customers? (OMIT)
-→ Shows if billing experience affects retention.
-*/
+ORDER BY num_dependents DESC;
 
--- 6 Do customers with longer tenure tend to stay longer (churn less)? -> have to create new column + correl() in Excel
-SELECT (CURRENT_DATE() - date_of_registration) AS tenure -- tenure logic figured out
-FROM telecomm;
-
--- 8 Is there a difference in churn between paperless billing and mailed billing customers? -> no payment method specified
-SELECT * FROM telecomm;
-
--- UNIVARIATE ANALYSIS - Gender demographics
-SELECT gender,COUNT(gender) AS perc
-FROM telecomm
-GROUP BY gender;
-
-/*
-BIVARIATE ANALYSIS
-•	Churn and Gender: 
-•	Churn and Age: 
-•	Churn and Salary: 
-•	Churn and Number of Dependents:
-•	Churn and Tenure: (need more data)
-*/
-SELECT gender, COUNT(churn) AS churn_num -- male churn > female churn -> possible that 1 gender churning more
-FROM telecomm
+-- no specific trend noticed in tenure
+SELECT DATEDIFF(CURDATE(), date_of_registration) AS tenure_days, COUNT(churn) AS churned_members
+FROM telecom_churn
 WHERE churn = 1
-GROUP BY gender;
+GROUP BY tenure_days
+ORDER BY tenure_days;
 
-SELECT age,COUNT(churn) AS churn_num -- age 57 and 46 churning -> possible that certain ages churn more
-FROM telecomm
-WHERE churn = 1
-GROUP BY age;
--- salary does matter 
-SELECT COUNT(churn) as churn_num
-FROM telecomm
-WHERE churn = 1 AND estimated_salary > (SELECT AVG(estimated_salary) FROM telecomm);
-
-SELECT COUNT(churn) as churn_num
-FROM telecomm
-WHERE churn = 1 AND estimated_salary < (SELECT AVG(estimated_salary) FROM telecomm);
-
-SELECT num_dependents,COUNT(churn) AS churn_num -- not necessary that there is a straight trend of num of depedents and churn
-FROM telecomm
-WHERE churn = 1
-GROUP BY num_dependents 
-ORDER BY churn_num DESC;
-
--- ADVANCED ANALYSIS needs Excel only.
+-- after SQL exploratory analysis , database dropped to free up space in my computer
+DROP DATABASE telecom_project;
