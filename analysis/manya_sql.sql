@@ -41,4 +41,5 @@ FROM telecomm
 WHERE churn=1
 GROUP BY num_dependents;
 
+SHOW databases;
     
